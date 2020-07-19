@@ -17,9 +17,10 @@ int main(void)
     FILE *fd, *wfd;
     fd = fopen("data.txt", "r");
     wfd = fopen("output.txt", "w");
-    while (fscanf(fd, "%d: %d, %d, %d\n", &studentId, &data[studentId].math, &data[studentId].phys, &data[studentId].eng) != EOF)
+    while (fscanf(fd, "%d: %d, %d, %d", &studentId, &data[studentId].math, &data[studentId].phys, &data[studentId].eng) != EOF)
     {
         data[studentId].id = studentId;
+        printf("%d",idx);
         idx++;
     }
 

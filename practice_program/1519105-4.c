@@ -8,8 +8,7 @@ int main(void)
     int dataId;
     // int arrIdx;
     //　ファイルのId格納
-    FILE *fd;
-    fd = fopen("test.txt", "r");
+    FILE *fd= fopen("math.d", "r");
 
     //全生徒の点数をデフォルト404として初期化
     // 以降の操作でデータとして存在しない生徒の点数は404となる
@@ -18,10 +17,10 @@ int main(void)
         score[i] = 404;
     }
 
-    while (fscanf(fd, "%d, %d\n", &dataId, &(score[dataId])) != EOF)
+    while (fscanf(fd, "%d: %d", &dataId, &(score[dataId])) != EOF)
     {
-        printf("dataId= %d ,score[dataId]=%d\n", dataId, score[dataId]);
-        // i++;
+        printf("dataId= %d ,score[dataId]=%d \n", dataId, score[dataId]);
+        i++;
     }
     // while (fscanf(fd, "%d: %d", &dataId, &score[dataId]) != EOF)
     // {

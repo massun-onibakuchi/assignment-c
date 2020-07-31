@@ -9,19 +9,6 @@ struct person
     struct person *next; //次のリストの要素
 };
 
-int command()
-{
-    int number;
-    printf("(0)display (1)append (2)exit\n");
-    scanf("%d", &number);
-    if (number > 3)
-    {
-        printf("Invalid number");
-        return 2;
-    }
-    return number;
-}
-
 /**
  * @param () 構造体のポインタ
  * @param (int)
@@ -56,10 +43,11 @@ struct person *list_add(struct person *list, int id, char name[])
     }
 }
 
-int *append(struct person *list)
+int main()
 {
     int i = 1;
     char buf[32];
+    struct person *list = NULL;
     while (1)
     {
         //標準入力
@@ -69,35 +57,15 @@ int *append(struct person *list)
             break;
         printf("Name ?>\n");
         scanf("%s", buf);
+
         // リストに追加する
         list = list_add(list, i, buf);
-        display_list(list);
+        struct person *element = list;
+        while (element != NULL)
+        {
+            printf("[%d],%s\n", element->id, element->name);
+            element = element->next;
+        }
     }
-}
-
-int *display(struct person *list)
-{
-    struct person *element = list;
-    while (element != NULL)
-    {
-        printf("[%d],%s\n", element->id, element->name);
-        element = element->next;
-    }
-}
-/** 
-* メイン
- */
-int main()
-{
-    int i = 1;
-    char buf[32];
-    struct person *list = NULL;
-    int com = command();
-    if (com == 0)
-        display(list);
-    if (com == 1)
-        append(list);
-    if (com == 2)
-        printf("end\n");
     return 0;
 }

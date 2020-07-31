@@ -12,8 +12,7 @@ struct person
 int command()
 {
     int number;
-    printf("(0)display (1)append (2)exit\n");
-    scanf("%d", &number);
+    scanf("%d", number);
     if (number > 3)
     {
         printf("Invalid number");

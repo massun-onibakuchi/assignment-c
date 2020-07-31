@@ -14,7 +14,7 @@ int main()
     int i = 1;
     char buf[32];
     struct person *tail = NULL; /* リスト構造の最初の構造体へのポインタを覚えておく変数 tail */
-    struct person *newTail, head, *current;
+    struct person *newTail, *head, *current;
     while (1)
     {
         /* データ入力とリスト構造になっている全会員表示を無限に繰り返す(Ctrl-cで終了) */
@@ -43,19 +43,18 @@ int main()
         if (head == NULL)
         {
             /* まだrootに何もない時 */
-            head = *newTail;
-            tail = head;
+            head = newTail;
         }
         else
         {
             /* tail にすでにデータが保存されている時 */
-            // rootはこのwhileループの前で追加されたかつて(現在のループの１つ前）のnewを参照するポインタ
-            tail->link = newTail;
-            current = newTail;
-            tail = current;
-            // tail->link = current;
+            //rootはこのwhileループの前で追加されたかつて(現在のループの１つ前）のnewを参照するポインタ
+            // tail->link = newTail;
             // current = newTail;
             // tail = current;
+            tail->link = current;
+            current = newTail;
+            tail = current;
             while (head != NULL)
             {
                 printf("[%d] %s\n", head->id, head->name);

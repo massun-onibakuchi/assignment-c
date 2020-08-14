@@ -6,7 +6,7 @@
 #define winMessage "勝ち"
 #define lossMessage "負け"
 
-int prompt()
+int promptHand()
 {
     int hand;
     printf("(0)ぐー (1)チョキ (2)パー\n");
@@ -60,7 +60,7 @@ int main(void)
 {
     while (1)
     {
-        int hand = prompt();
+        int hand = promptHand();
         printf("あなた:%d\n", hand);
         int comHand = genHand();
         printf("コンピュータ:%d\n", comHand);

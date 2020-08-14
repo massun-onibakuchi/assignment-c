@@ -8,10 +8,14 @@
 
 int doJanken(void);
 
-/** 入力をプロンプトする 0,1,2をグチパに対応.それ以外なら3を返す
- * 0,1,2，3を返す
+/* 
+勝敗がつくまでじゃんけんする．コンピュータはランダムで手を選ぶ．
  */
-int prompt()
+
+/** 入力をプロンプトする 0,1,2をグチパに対応.それ以外なら3を返す
+ * 0,1,2，3を返す]
+ */
+int promptHand()
 {
     int hand;
     printf("(0)ぐー (1)チョキ (2)パー\n");
@@ -52,7 +56,7 @@ int doJanken(void)
     int result = 0;
     while (result == 0)
     {
-        int hand = prompt();
+        int hand = promptHand();
         int comHand = genHand();
         printf("あなたの手:%d\n", hand);
         printf("コンピュータの手:%d\n", comHand);

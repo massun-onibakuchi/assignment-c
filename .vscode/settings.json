@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.tex": "tex",
+        "*.js": "javascript",
+        "__config": "c"
+    }
+}

@@ -3,54 +3,103 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define winMessage "勝ち"
-#define lossMessage "負け"
+#define doYou "do you"
+#define janken "janken"
+#define who "who"
+#define hello "hello"
+#define I "I "
+#define like "like"
+#define eat "eat"
+#define introduction "I am party Parrott"
+#define confusedMessage "I am sorry. I don’t know"
 
-int *prompt(char *buffer)
+int prompt(char *buffer)
 {
-    char *buf[32]; // NULL文字入れて32文字以内
+    // char *buf[32]; // NULL文字入れて32文字以内
     printf("input >\n ");
-    fgets(buf, 32, stdin); // 空白も含めて入力
-    printf("% s\n", buf);  // 配列bufに記憶されたデータを文字列として表示
-    return buf;
+    fgets(buffer, 32, stdin); // 空白も含めて入力
+    // 配列bufに記憶されたデータを文字列として表示
+    // return buffer;
 }
 
 int main(void)
 {
     while (1)
     {
-        char buffer[32];
-        int hand = prompt(buffer);
-        printf("あなた:%d\n", hand);
-        int comHand = genHand();
-        printf("コンピュータ:%d\n", comHand);
-        if (hand == 3)
+        enum QuestionType
         {
-            printf("お手つきです\n");
-            return 0;
+            doQuestion,
+            whoQuestion,
+            letJanken,
+            helloQuestion,
+            other
+        };
+
+        char wordsTable[3][10] = {doYou, who, janken, hello};
+
+        enum QuestionType type = other;
+
+        /* --------ユーザー入力------------------ */
+
+        char buffer[32];
+        prompt(buffer);
+        printf("コンピュータ:%s\n", buffer);
+
+        /* --------ユーザー入力------------------ */
+
+        for (int i = 0; i < other; i++)
+        {
+            char *key = strstr(buffer, wordsTable[i]);
+            // printf("wordTable[i]:%s\n", wordsTable[i]);
+            if (key != NULL)
+            {
+                type = i;
+                break;
+            }
+        }
+        //key word: do you
+        // printf("コンピュータ:%d\n", type);
+        if (type == doQuestion)
+        {
+            respond(buffer);
         }
 
-        if (comHand == hand)
+        if (type == whoQuestion)
         {
-            printf("あいこ\n");
+            printf("コンピュータ> %s", introduction);
         }
-        else
+
+        //  じゃんけんする
+        if (type == letJanken)
         {
-            char *message;
-            if (comHand == 0)
-            {
-                message = (hand == 2) ? winMessage : lossMessage;
-            }
-            if (comHand == 1)
-            {
-                message = (hand == 0) ? winMessage : lossMessage;
-            }
-            if (comHand == 2)
-            {
-                message = (hand == 1) ? winMessage : lossMessage;
-            }
-            printf("あなたの%sです\n", message);
-            break;
+
+        }
+
+        if (type == helloQuestion)
+        {
+            printf("コンピュータ> %s", hello);
+            printf("コンピュータ> %s", introduction);
+        }
+
+        if (type == other)
+        {
+            printf("コンピュータ> %s", confusedMessage);
         }
     }
+}
+
+int respond(char buffer)
+{
+    char wordsTable[2][10] = {like, eat};
+    for (int i = 0; i < 2; i++)
+    {
+        char *key = strstr(buffer, wordsTable[i]);
+        // printf("wordTable[i]:%s\n", wordsTable[i]);
+        if (key != NULL)
+        {
+            printf("コンピュータ>%s%s", I, key);
+            return;
+        }
+    }
+    printf("コンピュータ>%s", confusedMessage);
 }

@@ -6,61 +6,21 @@
 #define winMessage "勝ち"
 #define lossMessage "負け"
 
-int prompt()
+int *prompt(char *buffer)
 {
-    int hand;
-    printf("(0)ぐー (1)チョキ (2)パー\n");
-    scanf("%d", &hand);
-    if (hand >= 3)
-    {
-        printf("Invalid hand:");
-        return 3;
-    }
-    return hand;
+    char *buf[32]; // NULL文字入れて32文字以内
+    printf("input >\n ");
+    fgets(buf, 32, stdin); // 空白も含めて入力
+    printf("% s\n", buf);  // 配列bufに記憶されたデータを文字列として表示
+    return buf;
 }
 
-int genHand(void)
-{
-    srand((unsigned)time(NULL));
-    return rand() % 3;
-}
-/* 
-char judge(int comHand, int userHand)
-{
-    char *notif;
-    // if (comHand == 0)
-    // {
-    //     return (userHand == 2) ? "勝ち" : "負け";
-    // }
-    // if (comHand == 1)
-    // {
-    //     return (userHand == 0) ? "勝ち" : "負け";
-    // }
-    // if (comHand == 2)
-    // {
-    //     return (userHand == 1) ? "勝ち" : "負け";
-    // }
-
-    if (comHand == 0)
-    {
-        notif = (userHand == 2) ? winMessage : lossMessage;
-    }
-    if (comHand == 1)
-    {
-        notif = (userHand == 0) ? winMessage : lossMessage;
-    }
-    if (comHand == 2)
-    {
-        notif = (userHand == 1) ? winMessage : lossMessage;
-    }
-    return notif;
-}
- */
 int main(void)
 {
     while (1)
     {
-        int hand = prompt();
+        char buffer[32];
+        int hand = prompt(buffer);
         printf("あなた:%d\n", hand);
         int comHand = genHand();
         printf("コンピュータ:%d\n", comHand);

@@ -6,6 +6,9 @@
 #define winMessage "勝ち"
 #define lossMessage "負け"
 
+/** 入力をプロンプトする 0,1,2をグチパに対応.それ以外なら3を返す
+ * 0,1,2，3を返す
+ */
 int prompt()
 {
     int hand;
@@ -19,76 +22,55 @@ int prompt()
     return hand;
 }
 
+/* コンピュータのグチパをらんダム生成する 0，1，2のいずれを返す */
 int genHand(void)
 {
     srand((unsigned)time(NULL));
     return rand() % 3;
 }
-/* 
-char judge(int comHand, int userHand)
+
+/* ユーザーをコンピュータの手を引数にとりユーザーが勝ちか負けかを返す
+勝ちなら"勝ち"
+負けなら"負け"を返す */
+char *judge(int comHand, int userHand)
 {
     char *notif;
-    // if (comHand == 0)
-    // {
-    //     return (userHand == 2) ? "勝ち" : "負け";
-    // }
-    // if (comHand == 1)
-    // {
-    //     return (userHand == 0) ? "勝ち" : "負け";
-    // }
-    // if (comHand == 2)
-    // {
-    //     return (userHand == 1) ? "勝ち" : "負け";
-    // }
 
     if (comHand == 0)
-    {
         notif = (userHand == 2) ? winMessage : lossMessage;
-    }
     if (comHand == 1)
-    {
         notif = (userHand == 0) ? winMessage : lossMessage;
-    }
     if (comHand == 2)
-    {
         notif = (userHand == 1) ? winMessage : lossMessage;
-    }
     return notif;
 }
- */
+
 int main(void)
 {
-    while (1)
+    int result = 0;
+    while (result == 0)
     {
         int hand = prompt();
-        printf("あなた:%d\n", hand);
         int comHand = genHand();
-        printf("コンピュータ:%d\n", comHand);
+        printf("あなたの手:%d\n", hand);
+        printf("コンピュータの手:%d\n", comHand);
+
+        // 0,1,2,以外の数字をユーザーが入れた場合終了
         if (hand == 3)
         {
             printf("お手つきです\n");
             return 0;
         }
 
+        // あいこの時
         if (comHand == hand)
         {
             printf("あいこ\n");
         }
         else
         {
-            char *message;
-            if (comHand == 0)
-            {
-                message = (hand == 2) ? winMessage : lossMessage;
-            }
-            if (comHand == 1)
-            {
-                message = (hand == 0) ? winMessage : lossMessage;
-            }
-            if (comHand == 2)
-            {
-                message = (hand == 1) ? winMessage : lossMessage;
-            }
+            // あいこではないとき
+            char *message = judge(comHand, hand);
             printf("あなたの%sです\n", message);
             break;
         }

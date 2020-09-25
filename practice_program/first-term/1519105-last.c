@@ -12,7 +12,13 @@
 #define EAT "eat"
 #define INTRODUCTION "I am party Parrott"
 #define CONFUSEDMESSAGE "I am sorry. I don’t know"
-
+/* 
+do you -肯定する形で反応.
+who->自己紹介
+hello->挨拶
+janken->じゃんけんする
+else->わかりませんメッセ
+ */
 int doJanken(void);
 
 int prompt(char *buffer)
@@ -52,10 +58,10 @@ int main(void)
         other
     };
 
+    enum QuestionType type;
+
     //　検索キーワード
     char wordsTable[4][10] = {DOYOU, WHO, JANKEN, HELLO};
-
-    enum QuestionType type;
 
     while (1)
     {
@@ -92,6 +98,7 @@ int main(void)
             respond(buffer);
         }
 
+        //key word: who
         if (type == whoQuestion)
         {
             printf("コンピュータ> %s!! %s\n", HELLO, INTRODUCTION);
@@ -104,6 +111,7 @@ int main(void)
             doJanken();
         }
 
+        //key word: hello
         if (type == helloQuestion)
         {
             printf("コンピュータ> %s\n", HELLO);

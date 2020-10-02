@@ -1,10 +1,10 @@
 #include <stdio.h>
-int main(void)
+int readFile(char *filename)
 {
-  float data[512];
+  float data[1024];
   int i, num;
   FILE *fd;
-  fd = fopen("numbers.dat", "r");
+  fd = fopen(filename, "r");
   i = 0;
   while (fscanf(fd, "%f", &(data[i])) != EOF)
     i++;
@@ -18,5 +18,5 @@ int main(void)
     i++;
   }
 
-  return 0;
+  return data;
 }

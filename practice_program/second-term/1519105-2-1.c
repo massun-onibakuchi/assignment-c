@@ -28,7 +28,7 @@ int combi(int n, int r)
   // r>nなら弾く
   if (r > n)
   {
-    printf("INVALID: enter n greater than r.");
+    printf("INVALID: r is greater than n.");
     return 0;
   }
   // nCr=nCn-rより計算が短く済むようにする
@@ -43,9 +43,13 @@ int combi(int n, int r)
 void loop_test(int n, int (*func)(int, int))
 {
 
-  printf("----test-----\n");
-  printf("----calculate n=%d nCr-----\n", n);
-  printf("r nCr\n");
+  printf(
+      "----calculate n=%d nCr-----\n"
+      "----test-----\n"
+      "r nCr\n",
+      n);
+  // printf("----calculate n=%d nCr-----\n", n);
+  // printf("r nCr\n");
   for (int r = 0; r <= n; r++)
   {
     printf("%d %d\n", r, func(n, r));

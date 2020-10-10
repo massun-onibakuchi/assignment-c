@@ -17,7 +17,14 @@ int _combi(int n, int r)
   if (r == 1)
     return n;
   else
-    return _combi(n - 1, r - 1) + _combi(n - 1, r);
+    // nCr=nCn-rを使って計算が短く済むようにする
+    return ((r > n - r) ? _combi(n - 1, n - r) : _combi(n - 1, r - 1)) + ((r > n - r - 1) ? _combi(n - 1, n - r - 1) : _combi(n - 1, r));
+    // 複数のラインで書いたもの
+
+    // int term1 = (r > n - r) ? _combi(n - 1, n - r) : _combi(n - 1, r - 1);
+    // int term2 = (r > n - r - 1) ? _combi(n - 1, n - r - 1) : _combi(n - 1, r);
+    // return term1 + term2;
+
 }
 
 /** 
@@ -31,13 +38,12 @@ int combi(int n, int r)
     printf("INVALID: r is greater than n.");
     return 0;
   }
-  // nCr=nCn-rより計算が短く?済むようにする
-  // return  _combi(n, r);
-  return  _combi(n, r);
+  return _combi(n, r);
 }
 
 /** 
  * 引数の関数を1-19の整数で実行し，その結果を表示する
+ * @param (n) ループ回数
  * @param (*func(int)) 
  */
 void loop_test(int n, int (*func)(int, int))
@@ -62,7 +68,7 @@ void main(void)
   printf("Input an integer n and r  >\n");
   scanf("%d,%d", &n, &r);
 
-  //値を計算
+  //nCrを計算
   int result = combi(n, r);
   // 示す
   printf("Result : %d\n", result);

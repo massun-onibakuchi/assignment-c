@@ -26,6 +26,7 @@ int main(void)
         5
         7
         Input a number(End:ctrl-d) >Input a number(End:ctrl-d) >Input a number(End:ctrl-d) >Input a number(End:ctrl-d) >
+        /practice_program/second-term #
      */
     setbuf(stdout, NULL);
 
@@ -46,7 +47,6 @@ int main(void)
     // {
     //     data[i]=numbers[i];
     // }
-    // i--;
 
     /* Set the root */
     if (i > 0)
@@ -69,34 +69,40 @@ int main(void)
 
 int add_node(float val, struct bitree *node)
 {
+    //valがノードのvalueより小さい時
     if (val < node->value)
     {
+        //ブランチがleftにある場合
         if (node->left != (struct bitree *)NULL)
         {
+            //一つ深いところに進む．再帰呼び出し
             return add_node(val, node->left);
         }
         else
         {
+            //リーフノードを作る
             struct bitree *newnode = (struct bitree *)malloc(sizeof(struct bitree));
             newnode->left = (struct bitree *)NULL;
             newnode->right = (struct bitree *)NULL;
+            newnode->value=val;
             node->left = newnode;
-            return add_node(val,newnode);
         }
     }
     else
     {
         if (node->right != (struct bitree *)NULL)
-        {
+        { 
+            //一つ深いところに進む．再帰呼び出し
             return add_node(val, node->right);
         }
         else
         {
+            //リーフノードを作る
             struct bitree *newnode = (struct bitree *)malloc(sizeof(struct bitree));
             newnode->left = (struct bitree *)NULL;
             newnode->right = (struct bitree *)NULL;
+            newnode->value=val;
             node->right = newnode;
-            return add_node(val,newnode);
         }
     }
 }
@@ -105,33 +111,9 @@ int read_node(struct bitree *node)
 {
     if (node != (struct bitree *)NULL)
     {
+        //現在のノードから左側を読んでから現在のノードの値を出力して，それから右側を読む
         read_node(node->left);
         printf("%f ",node->value);
         read_node(node->right);
     }
 }
-// int read_node2(struct bitree *node)
-// {
-//     struct bitree *parentnode = (struct bitree *)NULL;
-//     if (node->left == (struct bitree *)NULL)
-//     {
-//         // while (node->right == (struct bitree *)NULL)
-//         // {
-//         //     printf("%d ", node->value);
-//         //     node = parentnode;
-//         // }
-//         do
-//         {
-//             printf("%d ", node->value);
-//             node = parentnode;
-//         } while (node->right == (struct bitree *)NULL);
-//         printf("%d ", node->value);
-
-//         return read_node2(node->right);
-//     }
-//     else
-//     {
-//         parentnode = node;
-//         return read_node2(node->left);
-//     }
-// }

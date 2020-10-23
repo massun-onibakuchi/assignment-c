@@ -17,14 +17,13 @@ int _combi(int n, int r)
   if (r == 1)
     return n;
   else
-    // nCr=nCn-rを使って計算が短く済むようにする
-    return ((r > n - r) ? _combi(n - 1, n - r) : _combi(n - 1, r - 1)) + ((r > n - r - 1) ? _combi(n - 1, n - r - 1) : _combi(n - 1, r));
-    // 複数のラインで書いたもの
-
-    // int term1 = (r > n - r) ? _combi(n - 1, n - r) : _combi(n - 1, r - 1);
-    // int term2 = (r > n - r - 1) ? _combi(n - 1, n - r - 1) : _combi(n - 1, r);
-    // return term1 + term2;
-
+    return (r > n - r) ? _combi(n - 1, n - r) + _combi(n - 1, n - r - 1) : _combi(n - 1, r) + _combi(n - 1, r - 1);
+  // nCr=nCn-rを使って計算が短く済むようにする
+  // return ((r > n - r) ? _combi(n - 1, n - r) : _combi(n - 1, r - 1)) + ((r > n - r - 1) ? _combi(n - 1, n - r - 1) : _combi(n - 1, r));
+  // 複数のラインで書いたもの
+  // int term1 = (r > n - r) ? _combi(n - 1, n - r) : _combi(n - 1, r - 1);
+  // int term2 = (r > n - r - 1) ? _combi(n - 1, n - r - 1) : _combi(n - 1, r);
+  // return term1 + term2;
 }
 
 /** 

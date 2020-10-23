@@ -43,7 +43,7 @@ int main(void)
 
     /* Test */
     // float numbers[256] ={8, 5, 7, 3, 10, 9, 6, 1, 20};
-    // for ( i = 0; i < 9; i++) 
+    // for ( i = 0; i < 9; i++)
     // {
     //     data[i]=numbers[i];
     // }
@@ -76,7 +76,7 @@ int add_node(float val, struct bitree *node)
         if (node->left != (struct bitree *)NULL)
         {
             //一つ深いところに進む．再帰呼び出し
-            return add_node(val, node->left);
+            add_node(val, node->left);
         }
         else
         {
@@ -84,16 +84,16 @@ int add_node(float val, struct bitree *node)
             struct bitree *newnode = (struct bitree *)malloc(sizeof(struct bitree));
             newnode->left = (struct bitree *)NULL;
             newnode->right = (struct bitree *)NULL;
-            newnode->value=val;
+            newnode->value = val;
             node->left = newnode;
         }
     }
     else
     {
         if (node->right != (struct bitree *)NULL)
-        { 
+        {
             //一つ深いところに進む．再帰呼び出し
-            return add_node(val, node->right);
+            add_node(val, node->right);
         }
         else
         {
@@ -101,7 +101,7 @@ int add_node(float val, struct bitree *node)
             struct bitree *newnode = (struct bitree *)malloc(sizeof(struct bitree));
             newnode->left = (struct bitree *)NULL;
             newnode->right = (struct bitree *)NULL;
-            newnode->value=val;
+            newnode->value = val;
             node->right = newnode;
         }
     }
@@ -113,7 +113,7 @@ int read_node(struct bitree *node)
     {
         //現在のノードから左側を読んでから現在のノードの値を出力して，それから右側を読む
         read_node(node->left);
-        printf("%f ",node->value);
+        printf("%f \n", node->value);
         read_node(node->right);
     }
 }

@@ -73,11 +73,9 @@ int add_node(float val, struct bitree *node)
     if (val < node->value)
     {
         //ブランチがleftにある場合
+        //一つ深いところに進む．再帰呼び出し
         if (node->left != (struct bitree *)NULL)
-        {
-            //一つ深いところに進む．再帰呼び出し
             add_node(val, node->left);
-        }
         else
         {
             //リーフノードを作る
@@ -90,11 +88,9 @@ int add_node(float val, struct bitree *node)
     }
     else
     {
+        //一つ深いところに進む．再帰呼び出し
         if (node->right != (struct bitree *)NULL)
-        {
-            //一つ深いところに進む．再帰呼び出し
             add_node(val, node->right);
-        }
         else
         {
             //リーフノードを作る
@@ -109,11 +105,10 @@ int add_node(float val, struct bitree *node)
 
 int read_node(struct bitree *node)
 {
-    if (node != (struct bitree *)NULL)
-    {
-        //現在のノードから左側を読んでから現在のノードの値を出力して，それから右側を読む
-        read_node(node->left);
-        printf("%f \n", node->value);
-        read_node(node->right);
-    }
+    if (node == (struct bitree *)NULL)
+        return 0;
+    //現在のノードから左側を読んでから現在のノードの値を出力して，それから右側を読む
+    read_node(node->left);
+    printf("%f \n", node->value);
+    read_node(node->right);
 }

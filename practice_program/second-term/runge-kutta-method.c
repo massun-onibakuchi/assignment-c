@@ -4,7 +4,6 @@
 #define GRAVITY 9.80665
 
 double func(double t, double v);
-/*  dv/dt = -g - alpha * v  */
 
 static double alpha = 0.2; /* global variable */
 

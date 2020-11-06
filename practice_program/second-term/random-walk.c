@@ -8,10 +8,10 @@
 #include <math.h>
 #include <time.h>
 
-#define TRIALS 100000  /* number of trials */
-#define PROB_RIGHT 0.4 /* number of random values */
-#define PROB_LEFT 0.4  /* number of random values */
-#define PROB_STAY 0.2  /* number of random values */
+#define TRIALS 100000 /* number of trials */
+#define PROB_RIGHT 0.4
+#define PROB_LEFT 0.4
+#define PROB_STAY 0.2
 
 /**
  * @struct Data
@@ -26,8 +26,8 @@ struct Data
 };
 
 int rnd_step();
-int iterate_trial(struct Data *data, int time, int trials);
 int trial(int time);
+int iterate_trial(struct Data *data, int time, int trials);
 int gen_data(FILE *fd, int time, int trials);
 
 int main()
@@ -47,7 +47,7 @@ int main()
 }
 
 /** 
- * 指定された時間と試行回数でランダムウォークをモンテカル法する
+ * 指定したパラメータでランダムウォークをモンテカル法し，位置に対する確率をcsv形式で出力
  * @param fd FILE
  * @param time ランダムウォークの時間
  * @param trials 試行回数
@@ -56,19 +56,19 @@ int gen_data(FILE *fd, int time, int trials)
 {
     //動的に割り当て
     struct Data *data = (struct Data *)malloc(sizeof(struct Data));
-    
+
     //指定された時間と試行回数でランダムウォークをモンテカル法する
     iterate_trial(data, time, trials);
 
     // カラム 位置x その観測数/試行回数 としてcsv形式で出力
     // plusとminusのindex0が重複するのでposiが0の時は特別に処理する
-    fprintf(fd, "%d,%f\n", 0, data->plus[0] / (float)TRIALS);
+    fprintf(fd, "%d,%f\n", 0, data->plus[0] / (float)trials);
     for (int k = 1; k < time + 1; k++)
     {
-        fprintf(fd, "%d,%f\n", k, data->plus[k] / (float)TRIALS);
-        fprintf(fd, "%d,%f\n", -k, data->minus[k] / (float)TRIALS);
-        // printf("plus[%d],%f\n", k, data->plus[k] / (float)TRIALS);
-        // printf("minus[%d],%f\n", -k, data->minus[k] / (float)TRIALS);
+        fprintf(fd, "%d,%f\n", k, data->plus[k] / (float)trials);
+        fprintf(fd, "%d,%f\n", -k, data->minus[k] / (float)trials);
+        // printf("plus[%d],%f\n", k, data->plus[k] / (float)trials);
+        // printf("minus[%d],%f\n", -k, data->minus[k] / (float)trials);
     }
     return 0;
 }
@@ -96,7 +96,7 @@ int iterate_trial(struct Data *data, int time, int trials)
     for (int i = 0; i < trials; i++)
     {
         // 一人のランダムウォークの試行で最終的に到着する位置x
-        int posi = trial(time); 
+        int posi = trial(time);
         // 最終的な位置posiに対してカウントをインクリメント
         (posi < 0) ? data->minus[-posi]++ : data->plus[posi]++;
     }

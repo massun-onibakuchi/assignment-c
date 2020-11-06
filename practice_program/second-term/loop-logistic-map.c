@@ -18,6 +18,7 @@ void output(FILE *fd, float mult, int maxtime, float min, float max, float x0);
 int main(int argc, char *argv[])
 {
     FILE *fd = fopen("./../logistic-map-loopV3.csv", "w");
+    //初期値
     float x0 = INITIALVALUE;
 
     //初期値を指定した場合
@@ -25,6 +26,8 @@ int main(int argc, char *argv[])
         sscanf(argv[1], "%f", &x0);
 
     printf("x0=%f\n", x0);
+
+    /* 3.57-4.0までは細かく変化させると十分なデータが得られる */
 
     // aが2.8から3.57まではaを0.01刻みで変化させ結果を出力する
     output(fd, 0.01, MAXTIME, MINCOEF, 3.57, x0);

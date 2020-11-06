@@ -1,73 +1,119 @@
+/**
+ * @file random-walk.c
+ * @brief ランダムウォークのモンテカルロ法
+ **/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
 
-#define TIME 50    /* time */
 #define TRIALS 100000  /* number of trials */
 #define PROB_RIGHT 0.4 /* number of random values */
 #define PROB_LEFT 0.4  /* number of random values */
 #define PROB_STAY 0.2  /* number of random values */
 
-/* ランダムウオーク */
+/**
+ * @struct Data
+ * ランダムウォークの時間，試行回数，位置 
+ */
+struct Data
+{
+    int time;
+    int trials;
+    int *plus;
+    int *minus;
+};
 
-int trial();
 int rnd_step();
+int iterate_trial(struct Data *data, int time, int trials);
+int trial(int time);
+int gen_data(FILE *fd, int time, int trials);
 
 int main()
 {
-    FILE *fd; 
-    //TIME後の位置x
-    int posi;
-    /* 2次元配列
-    インデックス0に position<0の時のカウントを格納
-    インデックス1に position>=0の時のカウントを格納
-    */
-    int result[2][TIME + 1];
+    FILE *fd = fopen("../rand_walk_10.csv", "w");
+    FILE *fd1 = fopen("../rand_walk_30.csv", "w");
+    FILE *fd2 = fopen("../rand_walk_50.csv", "w");
 
-    /* initialize the array */
-    for (int i = 0; i < TIME + 1; i++)
-    {
-        result[0][i] = 0; 
-        result[1][i] = 0; 
-    }
-
-    //一人の試行*TRIALS回行う
-    for (int i = 0; i < TRIALS; i++)
-    {
-        posi = trial();
-        // 最終的な位置posiに対してカウントをインクリメント
-        if (posi < 0)
-            result[0][-posi] += 1;
-        else
-            result[1][posi] += 1;
-    }
-
-    fd = fopen("../rand_walk_50.csv", "w");
-
-    for (int i = 0; i < 2; i += 1)
-    {
-        for (int k = 0; k < TIME + 1; k++)
-        {
-            // カラム 位置x その観測数/試行回数 としてcsv形式で出力
-            fprintf(fd, "%d,%f\n", (i == 1) ? k : -k, result[i][k] / (float)TRIALS);
-            // printf("%d, %d ,%f\n", (i == 1) ? k : -k, result[i][k], result[i][k] / (float)TRIALS);
-            // fprintf(fd, "%d,%f\n", (i == 1) ? k : -k, result[i][k]);
-        }
-    }
+    gen_data(fd, 10, TRIALS);
+    gen_data(fd1, 30, TRIALS);
+    gen_data(fd2, 50, TRIALS);
 
     fclose(fd);
+    fclose(fd1);
+    fclose(fd2);
     return 0;
 }
 
 /** 
- * ランダムウオークで最終的に到着する位置xを返す
+ * 指定された時間と試行回数でランダムウォークをモンテカル法する
+ * @param fd FILE
+ * @param time ランダムウォークの時間
+ * @param trials 試行回数
  */
-int trial()
+int gen_data(FILE *fd, int time, int trials)
+{
+    //動的に割り当て
+    struct Data *data = (struct Data *)malloc(sizeof(struct Data));
+    
+    //指定された時間と試行回数でランダムウォークをモンテカル法する
+    iterate_trial(data, time, trials);
+
+    // カラム 位置x その観測数/試行回数 としてcsv形式で出力
+    // plusとminusのindex0が重複するのでposiが0の時は特別に処理する
+    fprintf(fd, "%d,%f\n", 0, data->plus[0] / (float)TRIALS);
+    for (int k = 1; k < time + 1; k++)
+    {
+        fprintf(fd, "%d,%f\n", k, data->plus[k] / (float)TRIALS);
+        fprintf(fd, "%d,%f\n", -k, data->minus[k] / (float)TRIALS);
+        // printf("plus[%d],%f\n", k, data->plus[k] / (float)TRIALS);
+        // printf("minus[%d],%f\n", -k, data->minus[k] / (float)TRIALS);
+    }
+    return 0;
+}
+
+/** 
+ * 指定された時間と試行回数でランダムウォークをモンテカル法する
+ * @param data struct *Data
+ * @param time ランダムウォークの時間
+ * @param trials 試行回数
+ */
+int iterate_trial(struct Data *data, int time, int trials)
+{
+    int *plus = (int *)malloc(sizeof(int) * (time + 1));
+    int *minus = (int *)malloc(sizeof(int) * (time + 1));
+    data->plus = plus;
+    data->minus = minus;
+
+    for (int i = 0; i < time + 1; i++)
+    {
+        plus[i] = 0;
+        minus[i] = 0;
+    }
+
+    //trials回 ランダムウォークを試行
+    for (int i = 0; i < trials; i++)
+    {
+        // 一人のランダムウォークの試行で最終的に到着する位置x
+        int posi = trial(time); 
+        // 最終的な位置posiに対してカウントをインクリメント
+        (posi < 0) ? data->minus[-posi]++ : data->plus[posi]++;
+    }
+
+    return 0;
+}
+
+/** 一人のランダムウォークの試行で最終的に到着する位置x
+ * を返す
+ * @param time 
+ * @return posi 位置
+ */
+int trial(int time)
 {
     int step = 0;
     int posi = 0;
-    for (int i = 0; i < TIME; i++)
+    for (int i = 0; i < time; i++)
     {
         step = rnd_step();
         posi += step;

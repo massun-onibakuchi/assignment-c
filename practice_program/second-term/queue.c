@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     int end_time = -1;
     int new_person = 1;       /* 新しくやって来た客に付ける番号. 1から始まる. */
     double ave_arrival = 4.0; /* 客の平均到着間隔 */
-    double ave_work = 4.0;    /* 一つの処理にかかる平均時間 */
+    double ave_work = 8.0;    /* 一つの処理にかかる平均時間 */
     char buf;
 
     /* random seed */

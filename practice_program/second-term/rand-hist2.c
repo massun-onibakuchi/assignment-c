@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAXNUM 1000 /* number of random values */
-#define AVE 1.0     /* number of random values */
+#define MAXNUM 100000 /* number of random values */
+#define AVE 1.0       /* number of random values */
 
 float inverse_F(float r);
 
 int main(void)
 {
-    int i, index, histo[100] = {0}; /* reset histo array */
+    int i, index, histo[1000 - 1] = {0}; /* reset histo array */
     float r, x;
     FILE *fd;
 
-    for (i = 0; i < MAXNUM; i++)
+    for (i = 0; i < MAXNUM - 1; i++)
     {
         x = inverse_F(AVE);
         index = floor(x * 10); /* index number */
@@ -23,13 +23,14 @@ int main(void)
             continue;
         }
         histo[index]++;
-        printf("%d\n", index);
+        // printf("%d\n", index);
     }
 
     /* output the result to a file */
-    fd = fopen("histo.d", "w");
-    for (i = 0; i <= 100; i++)
-        fprintf(fd, "%d %d\n", i, histo[i]);
+    fd = fopen("../histo.csv", "w");
+    fprintf(fd, "%s,%s\n", "idx", "count");
+    for (i = 0; i < 100 - 1; i++)
+        fprintf(fd, "%d ,%d\n", i, histo[i]);
     fclose(fd);
     return 0;
 }

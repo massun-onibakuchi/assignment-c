@@ -93,10 +93,12 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+// 変換法で指数分布に従う乱数生成
 double expdev(double ave) /* 指数分布の平均値 (ave = 1/alpha) */
 {
     double x, r;
+    // 一様な乱数生成
     r = (double)rand() / (RAND_MAX + 1.0); /* generates a random value [0, 1) */
-    x = -ave * log(1 - r);
-    return x;
+    //指数分布の分布関数の逆関数で変換し，指数分布に従う乱数xを生成．
+    return -ave * log(1 - r);
 }

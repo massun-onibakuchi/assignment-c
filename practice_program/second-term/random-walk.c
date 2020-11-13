@@ -54,6 +54,10 @@ int main()
  */
 int gen_data(FILE *fd, int time, int trials)
 {
+    if (PROB_LEFT + PROB_RIGHT + PROB_STAY != 1)
+        return 1;
+    // (PROB_LEFT + PROB_RIGHT + PROB_STAY!=1) && return 1;
+
     //動的に割り当て
     struct Data *data = (struct Data *)malloc(sizeof(struct Data));
 

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define N 20000
+#define N 10000
 
 float a = 0.02;
 float b = 0.2;
@@ -9,13 +9,14 @@ float vth = 30.0;
 float v0 = -65.0;
 float u0 = 8.0;
 float dt = 0.1;
-float step = 200;
+float step = 300;
 
 float f(float t, float v, float u)
 {
     float I = 0.0;
     if (t > step)
-        I = (t - step) * 0.01;
+        I = 10;
+    // I = (t - step) * 0.01;
     return 0.04 * v * v + 5 * v + 140.0 - u + I;
 }
 float g(float t, float v, float u)

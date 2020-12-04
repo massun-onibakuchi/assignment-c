@@ -4,12 +4,13 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <signal.h> /* for signal */
 
 #define BUFSIZE 256              /* バッファサイズ */
 #define ERR -1                   /* システムコールのエラー */
 #define SERVER_SOCKET "mysocket" /* サーバのソケットの名前（パス名） */
 
-pid_t pid;
+void sigmsg(void);
 
 main(int argc, char *argv[])
 {
@@ -45,6 +46,13 @@ main(int argc, char *argv[])
     fromlen = sizeof(client);
     ns = accept(sockfd, (struct sockaddr *)&client, &fromlen);
 
+    if (signal(SIGINT, (void *)sigmsg) == SIG_ERR)
+    { /* SIGINT --> "sigmsg" is called */
+        /* in case of error */
+        perror("signal");
+        exit(1);
+    }
+
     while (1)
     {
         /* クライアントプロセスからのメッセージ受信 */
@@ -62,4 +70,11 @@ main(int argc, char *argv[])
     close(sockfd); /* ソケットのクローズ */
 
     return 0; /* 正常終了 */
+}
+
+void sigmsg(void)
+{
+    printf("*** Interrupted !! ***\n");
+    kill(getpid(), SIGINT);
+    exit(0);
 }

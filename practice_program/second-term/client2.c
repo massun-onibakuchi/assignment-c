@@ -4,15 +4,17 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
-
+#include <signal.h> /* for signal */
 
 #define BUFSIZE 256              /* バッファサイズ */
 #define ERR -1                   /* システムコールのエラー */
 #define SERVER_SOCKET "mysocket" /* サーバのソケットの名前（パス名） */
 
+void sigmsg(void);
+int sockfd; /* socket()の返すファイル記述子 */
+
 main(int argc, char *argv[])
 {
-    int sockfd;                /* socket()の返すファイル記述子 */
     struct sockaddr_un server; /* サーバプロセスのソケットアドレス情報 */
     struct hostent *hp;        /* ホスト情報 */
     static char buf[BUFSIZE];  /* メッセージを格納するバッファ */
@@ -31,6 +33,13 @@ main(int argc, char *argv[])
     if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) == ERR)
         exit(1);
 
+    if (signal(SIGINT, (void *)sigmsg) == SIG_ERR)
+    { /* SIGINT --> "sigmsg" is called */
+        /* in case of error */
+        perror("signal");
+        exit(1);
+    }
+
     /* サーバプロセスへのメッセージ送信 */
     while (1)
     {
@@ -42,9 +51,15 @@ main(int argc, char *argv[])
         bzero(buf, BUFSIZE);
         read(sockfd, buf, BUFSIZE);
         printf("received message: %s\n", buf);
-        // pid_t pid = getpid();
-        // printf("%d,pid\n", pid);
     }
-    close(sockfd); /* ソケットのクローズ */
-    return 0;      /* 正常終了 */
+
+    return 0; /* 正常終了 */
+}
+
+void sigmsg(void)
+{
+    printf("*** Interrupted !! ***\n");
+    close(sockfd);
+    kill(getpid(), SIGINT);
+    exit(0);
 }

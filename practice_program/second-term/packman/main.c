@@ -104,25 +104,25 @@ void setDirection(struct Entity *entity, char mvcommand)
     {
         entity->velocity_x = 1;
         entity->velocity_y = 0;
-        entity->command = entity->command = Right;
+        entity->command = Right;
     }
     if (mvcommand == 'e')
     {
         entity->velocity_x = 0;
-        entity->velocity_y = 1;
-        entity->command = entity->command = Up;
+        entity->velocity_y = -1;
+        entity->command = Up;
     }
     if (mvcommand == 'd')
     {
         entity->velocity_x = 0;
-        entity->velocity_y = -1;
-        entity->command = entity->command = Down;
+        entity->velocity_y = 1;
+        entity->command = Down;
     }
     if (mvcommand == 's')
     {
         entity->velocity_x = -1;
         entity->velocity_y = 0;
-        entity->command = entity->command = Left;
+        entity->command = Left;
     }
 }
 void entityMove(struct Entity *entity, char mvcommand)
@@ -130,14 +130,14 @@ void entityMove(struct Entity *entity, char mvcommand)
     char directions[4] = {'f', 'e', 'd', 's'};
     setDirection(entity, mvcommand);
     // entity->position_x + entity->velocity;
-    entity->position_x = entity->position_x + entity->velocity_x;
-    entity->position_y = entity->position_y + entity->velocity_y;
-    if (entity->position_x >= MAP_CHIP_WIDTH)
-        entity->position_x = MAP_CHIP_WIDTH;
+    entity->position_x += entity->velocity_x;
+    entity->position_y += entity->velocity_y;
+    if (entity->position_x > MAP_CHIP_WIDTH - 2)
+        entity->position_x = MAP_CHIP_WIDTH - 2;
     if (entity->position_x == 0)
         entity->position_x = 1;
-    if (entity->position_y >= MAP_CHIP_HEIGHT)
-        entity->position_y = MAP_CHIP_HEIGHT;
+    if (entity->position_y > MAP_CHIP_HEIGHT - 2)
+        entity->position_y = MAP_CHIP_HEIGHT - 2;
     if (entity->position_y == 0)
         entity->position_y = 1;
 }
@@ -178,9 +178,7 @@ void enemiesMove(struct Entity *enemies[])
             mvcommand = 'd';
         if (rnd == 4)
             mvcommand = 's';
-        printf("ge %d", rnd);
-        printf("command %c", mvcommand);
-        setDirection(enemies[i], mvcommand);
+        entityMove(enemies[i], mvcommand);
     }
 }
 int isGameOver(struct Entity *enemies[], struct Entity *player)
@@ -204,32 +202,54 @@ int printEnemies(struct Entity *enemies[], int x, int y)
     }
     return 0;
 }
+int entityMoveCheck(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH])
+{
+    // printf("chip.id %d", chip.id);
+    int cond1 = entity->position_x == chip[entity->position_y][entity->position_x].position_x;
+    int cond2 = entity->position_y == chip[entity->position_y][entity->position_x].position_y;
+    printf("entity->position_y %d", entity->position_y);
+    printf("entity->position_x %d", entity->position_x);
+    printf("chip.icon xy %s", chip[entity->position_y][entity->position_x].icon);
+    if ((chip[entity->position_y][entity->position_x].icon != ROAD) && cond1 && cond2)
+    {
+        entity->position_x -= entity->velocity_x;
+        entity->position_y -= entity->velocity_y;
+        return 0;
+    }
+    return 1;
+    // if (chip.id == 0)
+    //     return;
+    // if (entity->position_x == chip.position_x && entity->position_y == chip.position_y)
+    // {
+    //     entity->position_x -= entity->velocity_x;
+    //     entity->position_y -= entity->velocity_y;
+    //     return;
+    // }
+}
 int main()
 {
     struct Entity *enemies[ENEMY_NUMBER - 1];
     struct Entity player;
     player.icon = PLAYER;
-    player.position_x = 1;
-    player.position_y = 1;
-    player.velocity_x = 1;
-    player.velocity_y = 0;
+    player.position_x = MAP_CHIP_WIDTH / 2;
+    player.position_y = MAP_CHIP_HEIGHT / 2 + 3;
+    player.velocity_x = 0;
+    player.velocity_y = 1;
     initMapChip();
     initEnemy(enemies, ENEMY_NUMBER - 1);
     do
     {
         char mvcommand;
-        scanf("%c", &mvcommand);
+        scanf(" %c", &mvcommand);
         entityMove(&player, mvcommand);
         enemiesMove(enemies);
+        entityMoveCheck(&player, map_chip);
         for (unsigned int y = 0; y < MAP_CHIP_HEIGHT; y++)
         {
             for (unsigned int x = 0; x < MAP_CHIP_WIDTH; x++)
             {
-                ///@todo プレイヤーの移動ができるかどうか？
-                // if (IsPlayerMoveCheck(map_chip[y][x]))
-                // {
-                //     PlayerPositionBack();
-                // }
+
+                ///@todo プレイヤーの移動ができるかどうか
                 if (player.position_y == y && player.position_x == x)
                 {
                     printf("%s", player.icon);

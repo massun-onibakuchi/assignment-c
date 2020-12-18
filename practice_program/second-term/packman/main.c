@@ -91,8 +91,8 @@ void initMapChip()
             {
                 map_chip[i][j].icon = INVISIBLE_WALL;
             }
-            map_chip[i][j].position_x = i;
-            map_chip[i][j].position_y = j;
+            map_chip[i][j].position_x = j;
+            map_chip[i][j].position_y = i;
         }
     }
 }
@@ -207,9 +207,11 @@ int entityMoveCheck(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][
     // printf("chip.id %d", chip.id);
     int cond1 = entity->position_x == chip[entity->position_y][entity->position_x].position_x;
     int cond2 = entity->position_y == chip[entity->position_y][entity->position_x].position_y;
-    printf("entity->position_y %d", entity->position_y);
-    printf("entity->position_x %d", entity->position_x);
-    printf("chip.icon xy %s", chip[entity->position_y][entity->position_x].icon);
+    // printf("chip[entity->position_y][entity->position_x].position_y %d\n", chip[entity->position_y][entity->position_x].position_y);
+    // printf("chip[entity->position_y][entity->position_x].position_x %d\n", chip[entity->position_y][entity->position_x].position_x);
+    // printf("entity->position_y %d\n", entity->position_y);
+    // printf("dentity->position_x %d\n", entity->position_x);
+    // printf("chip.icon  %s\n", chip[entity->position_y][entity->position_x].icon);
     if ((chip[entity->position_y][entity->position_x].icon != ROAD) && cond1 && cond2)
     {
         entity->position_x -= entity->velocity_x;
@@ -228,11 +230,11 @@ int entityMoveCheck(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][
 }
 int main()
 {
-    struct Entity *enemies[ENEMY_NUMBER - 1];
+    struct Entity *enemies[ENEMY_NUMBER];
     struct Entity player;
     player.icon = PLAYER;
     player.position_x = MAP_CHIP_WIDTH / 2;
-    player.position_y = MAP_CHIP_HEIGHT / 2 + 3;
+    player.position_y = MAP_CHIP_HEIGHT / 2 + 4;
     player.velocity_x = 0;
     player.velocity_y = 1;
     initMapChip();

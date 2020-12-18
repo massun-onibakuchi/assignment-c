@@ -102,28 +102,24 @@ void setDirection(struct Entity *entity, char mvcommand)
     // scanf("%c", &mvcommand);
     if (mvcommand == 'f')
     {
-        entity->velocity = 1;
         entity->velocity_x = 1;
         entity->velocity_y = 0;
         entity->command = entity->command = Right;
     }
     if (mvcommand == 'e')
     {
-        entity->velocity = 1;
         entity->velocity_x = 0;
         entity->velocity_y = 1;
         entity->command = entity->command = Up;
     }
     if (mvcommand == 'd')
     {
-        entity->velocity = -1;
         entity->velocity_x = 0;
         entity->velocity_y = -1;
         entity->command = entity->command = Down;
     }
     if (mvcommand == 's')
     {
-        entity->velocity = -1;
         entity->velocity_x = -1;
         entity->velocity_y = 0;
         entity->command = entity->command = Left;
@@ -147,7 +143,7 @@ void entityMove(struct Entity *entity, char mvcommand)
 }
 int isMatchPosition(struct Entity *player, struct Entity *enemy)
 {
-    if (player->position_x == enemy->position_x || player->position_y == enemy->position_y)
+    if (player->position_x == enemy->position_x && player->position_y == enemy->position_y)
     {
         printf("GAME OVER");
         return 1;
@@ -161,10 +157,8 @@ void initEnemy(struct Entity *enemies[], int number)
         struct Entity *enemy = (struct Entity *)malloc(sizeof(struct Entity));
         enemies[i] = enemy;
         enemies[i]->icon = ENEMY;
-        // enemies[i]->position_x = MAP_CHIP_WIDTH / 2;
-        // enemies[i]->position_y = MAP_CHIP_HEIGHT / 2;
-        enemies[i]->position_x = 12;
-        enemies[i]->position_y = 12;
+        enemies[i]->position_x = MAP_CHIP_WIDTH / 2;
+        enemies[i]->position_y = MAP_CHIP_HEIGHT / 2;
         enemies[i]->velocity_x = 0;
         enemies[i]->velocity_y = 1;
     }
@@ -198,16 +192,17 @@ int isGameOver(struct Entity *enemies[], struct Entity *player)
     }
     return 0;
 }
-void printEnemies(struct Entity *enemies[], int x, int y)
+int printEnemies(struct Entity *enemies[], int x, int y)
 {
     for (int i = 0; enemies[i] != NULL; i++)
     {
         if (enemies[i]->position_y == y && enemies[i]->position_x == x)
         {
             printf("%s", enemies[i]->icon);
-            return;
+            return 1;
         }
     }
+    return 0;
 }
 int main()
 {
@@ -240,8 +235,7 @@ int main()
                     printf("%s", player.icon);
                     continue;
                 }
-                
-                printf("%s", map_chip[y][x].icon);
+                !printEnemies(enemies, x, y) && printf("%s", map_chip[y][x].icon);
             }
             printf("\n");
         }

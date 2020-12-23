@@ -14,7 +14,7 @@
 #define ENEMY "\x1b[41m  \x1b[49m"
 #define WALL "II"
 #define INVISIBLE_WALL "XX"
-#define ROAD "  "
+#define ROAD " "
 
 void init_curses()
 {
@@ -142,9 +142,9 @@ int main()
                 //     continue;
                 // }
                 // !printEnemies(enemies, x, y) && printf("%s", map_chip[y][x].icon);
-                // move(y,x);
-                // printw("%s",map_chip[y][x].icon);
-                mvprintw(y, x, map_chip[y][x].icon);
+                move(y,x);
+                printw("%s",map_chip[y][x].icon);
+                // mvprintw(y, x, map_chip[y][x].icon);
             }
             // printf("\n");
         }

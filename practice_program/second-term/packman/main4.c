@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <curses.h>
+#include <unistd.h>
 
 //マップチップの横幅
 #define MAP_CHIP_WIDTH 21
@@ -10,11 +11,11 @@
 #define ENEMY_NUMBER 5
 //表示するアイコン
 #define ITEM "\x1b[44m\x1b[49m"
-#define PLAYER "\x1b[44m  \x1b[49m"
-#define ENEMY "\x1b[41m  \x1b[49m"
-#define WALL "\x1b[49m  "
-#define INVISIBLE_WALL "\x1b[47m  \x1b[49m"
-#define ROAD "\x1b[47m  \x1b[49m"
+#define PLAYER "A"
+#define ENEMY "Q"
+#define WALL "II"
+#define INVISIBLE_WALL " "
+#define ROAD " "
 
 int map_chip_data[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH] =
     {
@@ -60,7 +61,8 @@ enum MoveCommand
     Up,
     Down,
     Right,
-    Left
+    Left,
+    Quit
 };
 /**
  * @struct Entity
@@ -139,32 +141,70 @@ void init_curses()
  */
 void setDirection(struct Entity *entity, char mvcommand)
 {
-    // char mvcommand;
-    // scanf("%c", &mvcommand);
-    if (mvcommand == 'f')
+    switch (mvcommand)
     {
-        entity->velocity_x = 1;
-        entity->velocity_y = 0;
-        entity->command = Right;
-    }
-    if (mvcommand == 'e')
-    {
-        entity->velocity_x = 0;
-        entity->velocity_y = -1;
-        entity->command = Up;
-    }
-    if (mvcommand == 'd')
-    {
-        entity->velocity_x = 0;
-        entity->velocity_y = 1;
-        entity->command = Down;
-    }
-    if (mvcommand == 's')
-    {
+    // case KEY_LEFT:
+    case 'h':
+    case 's':
         entity->velocity_x = -1;
         entity->velocity_y = 0;
         entity->command = Left;
+        break;
+    // case KEY_RIGHT:
+    case 'l':
+    case 'f':
+        entity->velocity_x = 1;
+        entity->velocity_y = 0;
+        entity->command = Right;
+        break;
+    // case KEY_UP:
+    case 'k':
+    case 'e':
+        entity->velocity_x = 1;
+        entity->velocity_y = 0;
+        entity->command = Up;
+        break;
+    // case KEY_DOWN:
+    case 'j':
+    case 'd':
+        entity->velocity_x = 0;
+        entity->velocity_y = -1;
+        entity->command = Down;
+        break;
     }
+    // case 'q':
+    //     entity->command = Quit;
+    // }
+    // if (*x == 999)
+    //     return 0;
+    // *x = (*x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
+    // *y = (*y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
+    // char mvcommand;
+    // scanf("%c", &mvcommand);
+    // if (mvcommand == 'f')
+    // {
+    //     entity->velocity_x = 1;
+    //     entity->velocity_y = 0;
+    //     entity->command = Right;
+    // }
+    // if (mvcommand == 'e')
+    // {
+    //     entity->velocity_x = 0;
+    //     entity->velocity_y = -1;
+    //     entity->command = Up;
+    // }
+    // if (mvcommand == 'd')
+    // {
+    //     entity->velocity_x = 0;
+    //     entity->velocity_y = 1;
+    //     entity->command = Down;
+    // }
+    // if (mvcommand == 's')
+    // {
+    //     entity->velocity_x = -1;
+    //     entity->velocity_y = 0;
+    //     entity->command = Left;
+    // }
 }
 /** @fn
  * @brief ランダムなコマンド文字生成
@@ -217,7 +257,7 @@ int entityMoveCheck(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][
  */
 int entityMove(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH], char mvcommand)
 {
-    char directions[4] = {'f', 'e', 'd', 's'};
+    // char directions[4] = {'f', 'e', 'd', 's'};
     setDirection(entity, mvcommand);
     // entity->position_x + entity->velocity;
     entity->position_x += entity->velocity_x;
@@ -241,7 +281,7 @@ int isMatchPosition(struct Entity *player, struct Entity *enemy)
 {
     if (player->position_x == enemy->position_x && player->position_y == enemy->position_y)
     {
-        printf("GAME OVER");
+        printw("GAME OVER");
         return 1;
     }
     return 0;
@@ -295,8 +335,43 @@ int printEnemies(struct Entity *enemies[], int x, int y)
     }
     return 0;
 }
+int mv_entity(int *ch, int *x, int *y)
+{
+    switch (*ch)
+    {
+    case KEY_LEFT:
+    case 'h':
+    case 's':
+        *x = *x - 1;
+        break;
+    case KEY_RIGHT:
+    case 'l':
+    case 'f':
+        *x = *x + 1;
+        break;
+    case KEY_UP:
+    case 'k':
+    case 'e':
+        (*y)--;
+        break;
+    case KEY_DOWN:
+    case 'j':
+    case 'd':
+        (*y)++;
+        break;
+    case 'q':
+        *x = 999;
+    }
+    if (*x == 999)
+        return 0;
+    *x = (*x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
+    *y = (*y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
+    return 1;
+}
 int main()
 {
+    char mvcommand;
+    int ch;
     struct Entity *enemies[ENEMY_NUMBER];
     struct Entity player;
     player.icon = PLAYER;
@@ -306,36 +381,31 @@ int main()
     player.velocity_y = 1;
     initMapChip();
     initEnemy(enemies, ENEMY_NUMBER);
-
-    initscr();
-    cbreak();
-    noecho();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-    timeout(0);
-    char mvcommand;
-    int ch;
+    init_curses();
     do
     {
         // scanf(" %c", &mvcommand);
         // ch = getch();
-        mvcommand = getch();
-        entityMove(&player, map_chip, mvcommand);
-        enemiesMove(enemies, map_chip);
+        refresh();
         // entityMoveCheck(&player, map_chip);
         for (unsigned int y = 0; y < MAP_CHIP_HEIGHT; y++)
         {
             for (unsigned int x = 0; x < MAP_CHIP_WIDTH; x++)
             {
-                if (player.position_y == y && player.position_x == x)
-                {
-                    printf("%s", player.icon);
-                    continue;
-                }
-                !printEnemies(enemies, x, y) && printf("%s", map_chip[y][x].icon);
+                move(y, x);
+                printw("%s", map_chip[y][x].icon);
+                // if (player.position_y == y && player.position_x == x)
+                // {
+                //     printw("%s", player.icon);
+                //     continue;
+                // }
+                // !printEnemies(enemies, x, y) && printw("%s", map_chip[y][x].icon);
             }
-            printf("\n");
         }
-        printf("\x1b[49m");
+        mvcommand = getch();
+        // entityMove(&player, map_chip, mvcommand);
+        // enemiesMove(enemies, map_chip);
+        clear();
+        usleep(100000);
     } while (isGameOver(enemies, &player) == 0);
 }

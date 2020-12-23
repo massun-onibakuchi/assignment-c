@@ -14,13 +14,14 @@ int main()
     initscr();
     cbreak();
     noecho();
+    curs_set(0);
     keypad(stdscr, TRUE);
-    timeout(0);
-    start_color();
-    // init_pair(1, COLOR_RED, COLOR_RED);    //色1に赤文字の赤地をセット
-    // bkgd(COLOR_PAIR(1));                   // 色1を背景色に
-    init_pair(2, COLOR_WHITE, COLOR_BLUE); //色2に青文字の黒地をセット
-    attrset(COLOR_PAIR(2));                // 色2を文字色にセット
+    timeout(50);
+    // start_color();
+    // // init_pair(1, COLOR_RED, COLOR_RED);    //色1に赤文字の赤地をセット
+    // // bkgd(COLOR_PAIR(1));                   // 色1を背景色に
+    // init_pair(2, COLOR_WHITE, COLOR_BLUE); //色2に青文字の黒地をセット
+    // attrset(COLOR_PAIR(2));                // 色2を文字色にセット
     mvprintw(1, 1, "AA");
     int posi_x = 0;
     while (1)
@@ -29,13 +30,14 @@ int main()
         // mvaddstr(y, x, PLAYER);
         posi_x++;
 
-        // mvaddstr(2, posi_x, "ASS");
+        mvaddstr(2, posi_x, "SS");
 
-        move(y, x);
+        // move(y, x);
         mvaddch(y, x, '*');
         ch = getch();
-
         delch(); /* 文字を消す */
+
+        clear();
         // flash();
         switch (ch)
         {
@@ -66,7 +68,9 @@ int main()
             break;
         x = (x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
         y = (y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
+        posi_x = (posi_x + COLS) % COLS;
         usleep(100000);
     }
+
     endwin();
 }

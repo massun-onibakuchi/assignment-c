@@ -37,9 +37,9 @@ int mv_entity(int *ch, int *x, int *y)
     }
     if (*x == 999)
         return 0;
-    x = (x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
-    y = (y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
-    return 1
+    *x = (*x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
+    *y = (*y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
+    return 1;
 }
 int main()
 {

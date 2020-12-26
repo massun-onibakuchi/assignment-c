@@ -314,12 +314,12 @@ int mv_entity(int *ch, int *x, int *y)
     case 'f':
         *x = *x + 1;
         break;
-    case KEY_UP:
+    case KEY_DOWN:
     case 'k':
     case 'e':
         (*y)--;
         break;
-    case KEY_DOWN:
+    case KEY_UP:
     case 'j':
     case 'd':
         (*y)++;
@@ -337,8 +337,7 @@ int main()
 {
     int posi_x = 0;
     char mvcommand;
-    int ch;
-    int x, y;
+
     struct Entity *enemies[ENEMY_NUMBER];
     struct Entity player;
     player.icon = PLAYER;
@@ -347,15 +346,15 @@ int main()
     player.velocity_x = 0;
     player.velocity_y = 1;
     initMapChip();
-    // initEnemy(enemies, ENEMY_NUMBER);
+    initEnemy(enemies, ENEMY_NUMBER);
     init_curses();
     do
     {
         // scanf(" %c", &mvcommand);
         // ch = getch();
         refresh();
-        posi_x++;
-        mvprintw(2, 2, "ASS");
+        // mvcommand = getch();
+        // posi_x++;
         // mvaddstr(2, posi_x, "ASS");
 
         // entityMoveCheck(&player, map_chip);
@@ -363,25 +362,21 @@ int main()
         {
             for (unsigned int x = 0; x < MAP_CHIP_WIDTH; x++)
             {
-                // if (player.position_y == y && player.position_x == x)
-                // {
-                //     printw("%s", player.icon);
-                //     continue;
-                // }
                 move(y, x);
                 printw("%s", map_chip[y][x].icon);
+                // mvprintw(y, x, "%s", map_chip[y][x].icon);
+                // if (player.position_y == y && player.position_x == x)
+                // {
+                // printw("%s", player.icon);
+                //     continue;
+                // }
                 // !printEnemies(enemies, x, y) && printw("%s", map_chip[y][x].icon);
             }
         }
-        mvaddstr(y, x, "*");
-        // mvaddch(y, x, '*');
-        ch = getch();
-        //   delch(); /* 文字を消す */
-        mv_entity(&ch, &x, &y);
-        posi_x = (posi_x + COLS) % COLS;
+        // mvprintw(2, 2, "ASS");
+
         // entityMove(&player, map_chip, mvcommand);
         // enemiesMove(enemies, map_chip);
-        posi_x = (posi_x + COLS) % COLS;
         clear();
         usleep(10000);
         // } while (isGameOver(enemies, &player) == 0);

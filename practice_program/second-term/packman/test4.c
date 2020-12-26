@@ -130,7 +130,6 @@ int main()
         // mvaddstr(y, x, PLAYER);
         mvprintw(2, 2, "AA");
         posi_x++;
-        mvaddstr(2, posi_x, "AAA");
 
         for (unsigned int y = 0; y < MAP_CHIP_HEIGHT; y++)
         {

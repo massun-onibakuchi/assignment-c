@@ -6,7 +6,7 @@
 #define MAP_CHIP_WIDTH 21
 //マップチップのの縦幅
 #define MAP_CHIP_HEIGHT 21
-#define ENEMY_NUMBER 5
+#define ENEMY_NUMBER 6
 //表示するアイコン
 #define ITEM "\x1b[44m\x1b[49m"
 #define PLAYER "\x1b[44m  \x1b[49m"
@@ -230,7 +230,7 @@ int isMatchPosition(struct Entity *player, struct Entity *enemy)
 {
     if (player->position_x == enemy->position_x && player->position_y == enemy->position_y)
     {
-        printf("GAME OVER");
+        printf("GAME OVER\n\n");
         return 1;
     }
     return 0;
@@ -294,7 +294,7 @@ int main()
     player.velocity_x = 0;
     player.velocity_y = 1;
     initMapChip();
-    initEnemy(enemies, ENEMY_NUMBER);
+    initEnemy(enemies, ENEMY_NUMBER - 1);
     do
     {
         char mvcommand;

@@ -46,8 +46,8 @@ struct MapChip
 {
     char *icon;
     int id;
-    unsigned int position_x;
-    unsigned int position_y;
+    int position_x;
+    int position_y;
 };
 struct MapChip map_chip[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH];
 enum EntityState
@@ -71,10 +71,10 @@ enum MoveCommand
 struct Entity
 {
     char *icon;
-    unsigned int position_x;
-    unsigned int position_y;
-    unsigned int velocity_x;
-    unsigned int velocity_y;
+    int position_x;
+    int position_y;
+    int velocity_x;
+    int velocity_y;
     enum MoveCommand command;
     enum EntityState state;
 };
@@ -139,7 +139,7 @@ void init_curses()
  * @param entity エンティティ構造体
  * @param mvcommand コマンド文字列
  */
-void setDirection(struct Entity *entity, char mvcommand)
+void setDirection(struct Entity *entity, int mvcommand)
 {
     switch (mvcommand)
     {
@@ -174,9 +174,9 @@ void setDirection(struct Entity *entity, char mvcommand)
  * @brief ランダムなコマンド文字生成
  * @return コマンド文字
  */
-char genRndCmd()
+int genRndCmd()
 {
-    char mvcommand;
+    int mvcommand;
     int rnd = (float)rand() / (RAND_MAX + 1.0) * 4.0; /* generate random values */
     if (rnd == 1)
         mvcommand = 'f';
@@ -213,16 +213,50 @@ int entityMoveCheck(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][
     }
     return 1;
 }
+int mv_entity(int *ch, int *x, int *y)
+{
+    switch (*ch)
+    {
+    case KEY_LEFT:
+    case 'h':
+    case 's':
+        *x = *x - 1;
+        break;
+    case KEY_RIGHT:
+    case 'l':
+    case 'f':
+        *x = *x + 1;
+        break;
+    case KEY_UP:
+    case 'k':
+    case 'e':
+        (*y)--;
+        break;
+    case KEY_DOWN:
+    case 'j':
+    case 'd':
+        (*y)++;
+        break;
+    case 'q':
+        *x = 999;
+    }
+    if (*x == 999)
+        return 0;
+    *x = (*x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
+    *y = (*y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
+    return 1;
+}
 /** @fn
  * @brief Entityを指定されたコマンドに従った方向に動かす
  * @param entity エンティティ構造体ポインタ
  * @param chip MapChip構造体
  * @param　mvcommand コマンドもじ
  */
-int entityMove(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH], char mvcommand)
+int entityMove(struct Entity *entity, struct MapChip chip[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH], int mvcommand)
 {
     // char directions[4] = {'f', 'e', 'd', 's'};
-    setDirection(entity, mvcommand);
+    // setDirection(entity, mvcommand);
+    mv_entity(&mvcommand, &entity->velocity_x, &(entity->velocity_y));
     // entity->position_x + entity->velocity;
     entity->position_x += entity->velocity_x;
     entity->position_y += entity->velocity_y;
@@ -259,7 +293,7 @@ void enemiesMove(struct Entity *enemies[], struct MapChip chip[MAP_CHIP_HEIGHT][
 {
     for (int i = 0; enemies[i] != NULL; i++)
     {
-        char cmd; //コマンド文字
+        int cmd; //コマンド文字
         // 動かした先が歩行可能エリアでないならばやり直す．
         do
         {
@@ -300,44 +334,12 @@ int printEnemies(struct Entity *enemies[], int x, int y)
     }
     return 0;
 }
-int mv_entity(int *ch, int *x, int *y)
-{
-    switch (*ch)
-    {
-    case KEY_LEFT:
-    case 'h':
-    case 's':
-        *x = *x - 1;
-        break;
-    case KEY_RIGHT:
-    case 'l':
-    case 'f':
-        *x = *x + 1;
-        break;
-    case KEY_UP:
-    case 'k':
-    case 'e':
-        (*y)--;
-        break;
-    case KEY_DOWN:
-    case 'j':
-    case 'd':
-        (*y)++;
-        break;
-    case 'q':
-        *x = 999;
-    }
-    if (*x == 999)
-        return 0;
-    *x = (*x + COLS) % COLS;   /* 必ず 0～COLS-1 に納める */
-    *y = (*y + LINES) % LINES; /* 必ず 0～LINES-1 に納める */
-    return 1;
-}
+
 int main()
 {
     int posi_x = 0;
-    char mvcommand;
-    int ch;
+    // char mvcommand;
+    int ch = 'l';
     int x, y;
     struct Entity *enemies[ENEMY_NUMBER];
     struct Entity player;
@@ -355,8 +357,9 @@ int main()
         // ch = getch();
         refresh();
         posi_x++;
-        mvprintw(2, 2, "ASS");
-        // mvaddstr(2, posi_x, "ASS");
+        // mvprintw(2, 2, "ASS");
+        mvaddstr(2, posi_x, "ASS");
+        mvprintw(posi_x, 1, "%d:%d", player.velocity_x, player.velocity_y);
 
         // entityMoveCheck(&player, map_chip);
         for (unsigned int y = 0; y < MAP_CHIP_HEIGHT; y++)
@@ -373,17 +376,23 @@ int main()
                 // !printEnemies(enemies, x, y) && printw("%s", map_chip[y][x].icon);
             }
         }
-        mvaddstr(y, x, "*");
-        // mvaddch(y, x, '*');
+        /// 順番大事
+        mvaddstr(player.position_y, player.position_x, "*");
         ch = getch();
-        //   delch(); /* 文字を消す */
-        mv_entity(&ch, &x, &y);
-        posi_x = (posi_x + COLS) % COLS;
-        // entityMove(&player, map_chip, mvcommand);
+        entityMove(&player, map_chip, ch);
+
+        ///
+        // mv_entity(&ch, &player.position_x, &player.position_y);
+        // entityMoveCheck(&player, map_chip);
+        /// 順番大事
+        // mvaddstr(y, x, "*");
+        // ch = getch();
+        // ///
+        // mv_entity(&ch, &x, &y);
         // enemiesMove(enemies, map_chip);
         posi_x = (posi_x + COLS) % COLS;
         clear();
-        usleep(10000);
+        usleep(100000);
         // } while (isGameOver(enemies, &player) == 0);
     } while (1);
 }

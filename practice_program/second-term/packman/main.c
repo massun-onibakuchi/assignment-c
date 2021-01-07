@@ -301,7 +301,6 @@ int main()
         scanf(" %c", &mvcommand);
         entityMove(&player, map_chip, mvcommand);
         enemiesMove(enemies, map_chip);
-        // entityMoveCheck(&player, map_chip);
         for (unsigned int y = 0; y < MAP_CHIP_HEIGHT; y++)
         {
             for (unsigned int x = 0; x < MAP_CHIP_WIDTH; x++)

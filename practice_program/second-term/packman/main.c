@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
+#include <poll.h>
 
 //マップチップの横幅
 #define MAP_CHIP_WIDTH 21
@@ -14,6 +16,8 @@
 #define WALL "\x1b[49m  "
 #define INVISIBLE_WALL "\x1b[47m  \x1b[49m"
 #define ROAD "\x1b[47m  \x1b[49m"
+
+struct pollfd pollfd = {STDIN_FILENO, POLLIN | POLLPRI};
 
 int map_chip_data[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH] =
     {
@@ -48,11 +52,6 @@ struct MapChip
     unsigned int position_y;
 };
 struct MapChip map_chip[MAP_CHIP_HEIGHT][MAP_CHIP_WIDTH];
-enum EntityState
-{
-    None,
-    Encount,
-};
 // アイコンの動く方向を示す
 enum MoveCommand
 {
@@ -73,7 +72,6 @@ struct Entity
     unsigned int velocity_x;
     unsigned int velocity_y;
     enum MoveCommand command;
-    enum EntityState state;
 };
 /** @fn
  * @brief mapchipの初期化
@@ -284,8 +282,17 @@ int printEnemies(struct Entity *enemies[], int x, int y)
     }
     return 0;
 }
+int pollScanf(char *cmd)
+{
+    if (poll(&pollfd, 1, 1000))
+    {
+        scanf(" %c", cmd);
+    }
+    return 0;
+}
 int main()
 {
+    char mvcommand;
     struct Entity *enemies[ENEMY_NUMBER];
     struct Entity player;
     player.icon = PLAYER;
@@ -297,9 +304,10 @@ int main()
     initEnemy(enemies, ENEMY_NUMBER - 1);
     do
     {
-        char mvcommand;
-        scanf(" %c", &mvcommand);
+        pollScanf(&mvcommand);
         entityMove(&player, map_chip, mvcommand);
+        if (isGameOver(enemies, &player) == 1)
+            break;
         enemiesMove(enemies, map_chip);
         for (unsigned int y = 0; y < MAP_CHIP_HEIGHT; y++)
         {
@@ -315,5 +323,5 @@ int main()
             printf("\n");
         }
         printf("\x1b[49m");
-    } while (isGameOver(enemies, &player) == 0);
+    } while (1);
 }
